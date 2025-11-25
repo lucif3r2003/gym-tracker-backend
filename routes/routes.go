@@ -1,5 +1,11 @@
 package routes
 
-func IdentityRoute(){
+import (
+	"gym-tracker-project/controllers"
 
+	"github.com/gin-gonic/gin"
+)
+
+func IdentityRoute(identityRoute *gin.Engine){
+	identityRoute.POST("/users/signup", controllers.SignUp)
 }

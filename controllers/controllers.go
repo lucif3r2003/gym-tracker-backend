@@ -44,3 +44,16 @@ func SignUp(ctx *gin.Context){
 	}
 	ctx.JSON(200, gin.H{"message": "OK"})
 }
+
+func Login(ctx *gin.Context){
+	req := models.LoginRequest{}
+	if err:= ctx.ShouldBindJSON(&req); err != nil{
+		ctx.JSON(500, gin.H{"error":"invalid request"})
+		return
+	}
+}
+
+
+
+
+

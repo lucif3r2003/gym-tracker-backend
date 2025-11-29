@@ -61,6 +61,7 @@ func CheckDuplicateEmail(email string) (bool, error) {
 	return count > 0, nil
 }
 
+//------------------------------------------------------------------
 func HashPassword(password string) (string, error) {
 	hashed, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {

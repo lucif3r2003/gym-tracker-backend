@@ -13,7 +13,6 @@ import (
 var DB *mongo.Database
 
 func ConnectUrl() string {
-	godotenv.Load(".env")
 	user := os.Getenv("MONGO_USER")
 	password := os.Getenv("MONGO_PASSWORD")
 	cluster := os.Getenv("MONGO_CLUSTER")

@@ -13,32 +13,38 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-
-func UserCollection() *mongo.Collection{
-	return database.DB.Collection("users")
+type UserRepo struct{
+	collection *mongo.Collection
 }
 
-func CreateUser(user models.User) error{
-	_, err := UserCollection().InsertOne(context.Background(), user)
+func NewUserRepo() *UserRepo{
+	return &UserRepo{
+		collection: database.DB.Collection("user"),
+	}
+}
+
+
+func (repo *UserRepo) CreateUser(user models.User) error{
+	_, err := repo.collection.InsertOne(context.Background(), user)
 	return err
 }
 
-func UpdateUser(user models.User) error{
+func (repo *UserRepo) UpdateUser(user models.User) error{
 	id, _ := primitive.ObjectIDFromHex(user.ID.String())
 
 	user.Update_At = time.Now()
 	update := bson.M{"$set": user}
-	result, err := UserCollection().UpdateOne(context.TODO(), bson.M{"_id":id}, update)
+	result, err := repo.collection.UpdateOne(context.TODO(), bson.M{"_id":id}, update)
 	fmt.Printf("\nupdate %v documents !", result.ModifiedCount)
 	return err
 }
 
-func DeleteUser(mail string) error{
+func (repo *UserRepo) DeleteUser(mail string) error{
 	_, err:= FindUserByEmail(mail)
 	if err != nil{
 		log.Fatal(err)
 	}
-	result, err:= UserCollection().DeleteOne(context.Background(), bson.M{"email": mail})
+	result, err:= repo.collection.DeleteOne(context.Background(), bson.M{"email": mail})
 	if err != nil{
 		log.Fatal(err)
 	}
@@ -47,14 +53,14 @@ func DeleteUser(mail string) error{
 }
 
 //-------------------------------------------------------------------
-func FindUserByEmail(mail string) (models.User, error){
+func (repo *UserRepo)FindUserByEmail(mail string) (models.User, error){
 	var user models.User
-	err := UserCollection().FindOne(context.TODO(), bson.M{"email" : mail}).Decode(&user)
+	err := repo.collection.FindOne(context.TODO(), bson.M{"email" : mail}).Decode(&user)
 	return user, err
 }
 
-func CheckDuplicateEmail(email string) (bool, error) {
-	count, err := UserCollection().CountDocuments(context.TODO(), bson.M{"email": email})
+func (repo *UserRepo) CheckDuplicateEmail(email string) (bool, error) {
+	count, err := repo.collection.CountDocuments(context.TODO(), bson.M{"email": email})
 	if err != nil {
 		return false, err
 	}

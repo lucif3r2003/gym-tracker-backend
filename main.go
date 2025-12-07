@@ -12,9 +12,10 @@ import (
 
 func main(){
 	//get port and connect db
+
+	godotenv.Load(".env")
 	fmt.Println("hello project")
 	database.ConnectDb()
-	godotenv.Load(".env")
 	port := os.Getenv("PORT")
 	
 	//set up gin -_- blyat

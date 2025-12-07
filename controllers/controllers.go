@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"gym-tracker-project/auth"
 	"gym-tracker-project/models"
 	"gym-tracker-project/repositories"
 
@@ -51,6 +52,27 @@ func Login(ctx *gin.Context){
 		ctx.JSON(500, gin.H{"error":"invalid request"})
 		return
 	}
+
+	user, err := repositories.FindUserByEmail(req.Email) 
+	if err != nil {
+		ctx.JSON(500, gin.H{"error": "cannot find user"})
+		return
+	}
+
+	valid := repositories.CheckPassword(user.Password, req.Password)
+	if !valid{
+		ctx.JSON(500, gin.H{"error": "wrong password"})
+		return
+	}
+	jwtManager := auth.NewJWTManager()
+			
+	access, err := jwtManager.GenerateAccessToken(user.ID.String())
+	refresh, err := jwtManager.GenerateRefreshToken(user.ID.String())
+
+	ctx.JSON(200, gin.H{
+		"access_token":  access,
+		"refresh_token": refresh,
+	})
 }
 
 

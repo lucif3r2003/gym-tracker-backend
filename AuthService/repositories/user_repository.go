@@ -40,7 +40,7 @@ func (repo *UserRepo) UpdateUser(user models.User) error{
 }
 
 func (repo *UserRepo) DeleteUser(mail string) error{
-	_, err:= FindUserByEmail(mail)
+	_, err:= repo.FindUserByEmail(mail)
 	if err != nil{
 		log.Fatal(err)
 	}

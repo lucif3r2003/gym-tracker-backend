@@ -11,6 +11,7 @@ import (
 
 
 func SignUp(ctx *gin.Context){
+	userRepo := repositories.NewUserRepo()
 	req := models.UserRequest{}
 	if err := ctx.ShouldBindJSON(&req) ; err!=nil{
 		ctx.JSON(500, gin.H{"error": "invalid request"})
@@ -27,7 +28,7 @@ func SignUp(ctx *gin.Context){
 	user.Password = hashedPassword
 
 	//check dup email
-	exist, err := repositories.CheckDuplicateEmail(user.Email)
+	exist, err := userRepo.CheckDuplicateEmail(user.Email)
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": "db error"})
 		return
@@ -38,7 +39,7 @@ func SignUp(ctx *gin.Context){
 	}
 	
 	//create user 
-	errCreate := repositories.CreateUser(user)
+	errCreate := userRepo.CreateUser(user)
 	if errCreate != nil {
 		ctx.JSON(222, gin.H{"error":"cannot create user"})
 		return
@@ -47,13 +48,14 @@ func SignUp(ctx *gin.Context){
 }
 
 func Login(ctx *gin.Context){
+	userRepo := repositories.NewUserRepo()
 	req := models.LoginRequest{}
 	if err:= ctx.ShouldBindJSON(&req); err != nil{
 		ctx.JSON(500, gin.H{"error":"invalid request"})
 		return
 	}
 
-	user, err := repositories.FindUserByEmail(req.Email) 
+	user, err := userRepo.FindUserByEmail(req.Email) 
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": "cannot find user"})
 		return

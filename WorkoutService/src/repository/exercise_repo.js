@@ -35,3 +35,12 @@ export const addExerciseToDay = async (dayId, exerciseData) => {
     throw error;
   } 
 }
+
+//add a new workout day
+export const newWorkoutDay = (workoutData) =>{
+  try {
+   return workout_day.insertOne(workoutData)
+  } catch (error) {
+    
+  }
+}

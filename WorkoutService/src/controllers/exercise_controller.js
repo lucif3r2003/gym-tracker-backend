@@ -39,3 +39,13 @@ export const addExerciseController = async(req, res, next) =>{
     next(error)  
   }
 }
+
+
+export const newWorkoutDayController = async(req, res, next) => {
+  try {
+    const data = req.body
+    
+  } catch (error) {
+    
+  }
+}
